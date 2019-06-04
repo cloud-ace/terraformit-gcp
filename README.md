@@ -19,6 +19,8 @@ Install [terraform](https://learn.hashicorp.com/terraform/) or [tfenv](https://g
 
 Install [gcloud](https://cloud.google.com/sdk/gcloud/?hl=en) to create a credential.
 
+Install [Go tools](https://golang.org/dl/) to use go command.
+
 ### Set gcloud authentication
 Generate ~/.config/gcloud/application_default_credentials.json credential.  
 Terraform command and google storage library use this credential.
