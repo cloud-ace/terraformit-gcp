@@ -11,6 +11,13 @@ terraformit-gcp steps are as below.
 
 4. terraformit-gcp executes "terraform plan" command to check tf files are generated successfully.
 
+## Version Table
+terraformit-gcp does not support terraform 0.12.0 now.
+
+| terraformit-gcp | go | terraform | google provider | google provider (beta) | 
+|:-------:|:-------:|:-------:|:-------:|:-------:|
+| v0.9.0 | v1.12 | v0.11.13 and v0.11.14 | v2.5.1 | v2.5.1 |
+
 ## To start using terraformit-gcp
 Please follow these steps.
 
@@ -30,19 +37,12 @@ gcloud auth login
 
 ### Install terraformit-gcp
 Install terraformit-gcp.
+git clone terraformit-gcp to your GOPATH.
 ```
-go get -u github.com/cloud-ace/terraformit-gcp
-```
-or
-```
+export GO111MODULE=on
 git clone https://github.com/cloud-ace/terraformit-gcp.git -b v0.9.0 ~/go/src/github.com/cloud-ace/terraformit-gcp
-go install ~/go/src/github.com/cloud-ace/terraformit-gcp
-```
-
-terraformit-gcp uses template files in GOPATH/src/github.com/cloud-ace/terraformit-gcp/ directory.  
-If GOPATH/src/github.com/cloud-ace/terraformit-gcp/ is enpty, git clone.
-```
-git clone github.com/cloud-ace/terraformit-gcp
+cd ~/go/src/github.com/cloud-ace/terraformit-gcp
+go install
 ```
 
 ### Set path
@@ -145,13 +145,6 @@ Following steps below are executed.
 ### terraformit-gcp create tffile (-f tfstatefile)
 Following steps below are executed.  
 1. create tffile
-
-## Version Table
-terraformit-gcp does not support terraform 0.12.0 now.
-
-| terraformit-gcp  | Terraform | google provider | google provider (beta) | 
-|:-------:|:-------:|:-------:|:-------:|
-| v0.9.0 | v0.11.13 and v0.11.14 | v2.5.1 | v2.5.1 |
 
 ## Support Table
 This command will support GCP resources [Cloud Asset API](https://cloud.google.com/resource-manager/docs/cloud-asset-inventory/overview?hl=en) supports.
