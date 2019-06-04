@@ -1,0 +1,17 @@
+resource "google_compute_target_http_proxy" "{{convertSlashAndDotToDash .Primary.ID}}"{
+    //provider
+    {{ if eq .Provider "provider.google" }}provider = "google" {{ end }}
+    {{ if eq .Provider "provider.google-beta" }}provider = "google-beta" {{ end }}
+    
+    //required
+    name = "{{.Primary.Attributes.Name}}"
+    url_map = "{{.Primary.Attributes.URLMap}}"
+    
+    //optional
+    {{$tmp := .Primary.Attributes.Description}}{{with $tmp}}
+    description = "{{escapeDoubleQuote $tmp}}"{{end}}
+           
+    {{$tmp := .Primary.Attributes.Project}}{{with $tmp}}
+    project = "{{$tmp}}"{{end}}
+    //beta
+}

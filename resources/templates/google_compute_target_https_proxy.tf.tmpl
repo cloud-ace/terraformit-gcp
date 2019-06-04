@@ -1,0 +1,28 @@
+resource "google_compute_target_https_proxy" "{{convertSlashAndDotToDash .Primary.ID}}"{
+    //provider
+    {{ if eq .Provider "provider.google" }}provider = "google" {{ end }}
+    {{ if eq .Provider "provider.google-beta" }}provider = "google-beta" {{ end }}
+    
+    //required
+    name = "{{.Primary.Attributes.Name}}"
+    url_map = "{{.Primary.Attributes.URLMap}}"
+
+    {{$tmp := .Primary.Attributes.SslCertificates}}
+    {{with $tmp}}{{$length := len $tmp}}
+    ssl_certificates = [{{range $i, $v := $tmp}}{{if lt (plus $i) $length }}"{{$v}}",{{else}}"{{$v}}"{{ end }}{{ end }}]{{end}}
+
+    //optional
+    {{$tmp := .Primary.Attributes.Description}}{{with $tmp}}
+    description = "{{escapeDoubleQuote $tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.QuicOverride}}{{with $tmp}}
+    quic_override = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.SslPolicy}}{{with $tmp}}
+    ssl_policy = "{{$tmp}}"{{end}}
+
+           
+    {{$tmp := .Primary.Attributes.Project}}{{with $tmp}}
+    project = "{{$tmp}}"{{end}}
+    //beta
+}

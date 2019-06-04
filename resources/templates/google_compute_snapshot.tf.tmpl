@@ -1,0 +1,29 @@
+resource "google_compute_snapshot" "{{convertSlashAndDotToDash .Primary.ID}}"{
+    //provider
+    {{ if eq .Provider "provider.google" }}provider = "google"{{ end }}
+    {{ if eq .Provider "provider.google-beta" }}provider = "google-beta"{{ end }}
+    //required
+    name = "{{.Primary.Attributes.Name}}"
+    source_disk = "{{.Primary.Attributes.SourceDisk}}"
+    //optional
+    {{$tmp := .Primary.Attributes.Description}}{{with $tmp}}
+    description = "{{escapeDoubleQuote $tmp}}"{{end}}
+    {{$tmp := .Primary.Attributes.Labels}}{{with $tmp}} 
+    labels {
+        {{range $i, $v := $tmp}}
+        {{$i}} = "{{$v}}"{{end}}
+    }{{end}}
+    //zone =
+    {{$tmp := .Primary.Attributes.Project}}{{with $tmp}}
+    project = "{{$tmp}}"{{end}}
+
+    //disk_encryption_key {
+       //raw_key = 
+   //}
+    {{$tmp := .Primary.Attributes.SnapshotEncryptionKey}}{{with $tmp}}
+    {{range $i, $v := $tmp}}
+    //source_snapshot_encryption_key {
+        //raw_key = "{{$v.RawKey }}"
+        //sha256 = "{{$v.Sha256 }}"
+    //}{{end}}{{end}}
+}

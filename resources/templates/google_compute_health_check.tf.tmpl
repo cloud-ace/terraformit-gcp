@@ -1,0 +1,96 @@
+resource "google_compute_health_check" "{{convertSlashAndDotToDash .Primary.ID}}"{
+    //provider
+    {{ if eq .Provider "provider.google" }}provider = "google" {{ end }}
+    {{ if eq .Provider "provider.google-beta" }}provider = "google-beta" {{ end }}
+    
+    //required
+    name = "{{.Primary.Attributes.Name}}"
+    
+    //optional
+    {{$tmp := .Primary.Attributes.CheckIntervalSec}}{{with $tmp}}
+    check_interval_sec = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.Description}}{{with $tmp}}
+    description = "{{escapeDoubleQuote $tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.HealthyThreshold}}{{with $tmp}}
+    healthy_threshold = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.TimeoutSec}}{{with $tmp}}
+    timeout_sec = "{{$tmp}}"{{end}}
+    
+    {{$tmp := .Primary.Attributes.UnhealthyThreshold}}{{with $tmp}}
+    unhealthy_threshold = "{{$tmp}}"{{end}}
+           
+    {{$tmp := .Primary.Attributes.Project}}{{with $tmp}}
+    project = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.HTTPHealthCheck}}{{with $tmp}}
+    {{range $i, $v := $tmp}}
+    http_health_check {
+        {{$tmp := $v.Host}}{{with $tmp}}
+        host = "{{$tmp}}"{{end}}
+        {{$tmp := $v.RequestPath}}{{with $tmp}}
+        request_path = "{{$tmp}}"{{end}}
+        {{$tmp := $v.Response}}{{with $tmp}}
+        response = "{{$tmp}}"{{end}}
+        {{$tmp := $v.Port}}{{with $tmp}}
+        port = "{{$tmp}}"{{end}}
+        {{$tmp := $v.ProxyHeader}}{{with $tmp}}
+        proxy_header = "{{$tmp}}"{{end}}
+        {{$tmp := $v.Request}}{{with $tmp}}
+        request = "{{$tmp}}"{{end}}
+    }{{end}}{{end}}
+
+    {{$tmp := .Primary.Attributes.HTTPSHealthCheck}}{{with $tmp}}
+    {{range $i, $v := $tmp}}
+    https_health_check {
+        {{$tmp := $v.Host}}{{with $tmp}}
+        host = "{{$tmp}}"{{end}}
+        {{$tmp := $v.RequestPath}}{{with $tmp}}
+        request_path = "{{$tmp}}"{{end}}
+        {{$tmp := $v.Response}}{{with $tmp}}
+        response = "{{$tmp}}"{{end}}
+        {{$tmp := $v.Port}}{{with $tmp}}
+        port = "{{$tmp}}"{{end}}
+        {{$tmp := $v.ProxyHeader}}{{with $tmp}}
+        proxy_header = "{{$tmp}}"{{end}}
+        {{$tmp := $v.Request}}{{with $tmp}}
+        request = "{{$tmp}}"{{end}}
+    }{{end}}{{end}}
+
+    {{$tmp := .Primary.Attributes.SslHealthCheck}}{{with $tmp}}
+    {{range $i, $v := $tmp}}
+    ssl_health_check {
+        {{$tmp := $v.Host}}{{with $tmp}}
+        host = "{{$tmp}}"{{end}}
+        {{$tmp := $v.RequestPath}}{{with $tmp}}
+        request_path = "{{$tmp}}"{{end}}
+        {{$tmp := $v.Response}}{{with $tmp}}
+        response = "{{$tmp}}"{{end}}
+        {{$tmp := $v.Port}}{{with $tmp}}
+        port = "{{$tmp}}"{{end}}
+        {{$tmp := $v.ProxyHeader}}{{with $tmp}}
+        proxy_header = "{{$tmp}}"{{end}}
+        {{$tmp := $v.Request}}{{with $tmp}}
+        request = "{{$tmp}}"{{end}}
+    }{{end}}{{end}}
+
+    {{$tmp := .Primary.Attributes.TCPHealthCheck}}{{with $tmp}}
+    {{range $i, $v := $tmp}}
+    tcp_health_check {
+        {{$tmp := $v.Host}}{{with $tmp}}
+        host = "{{$tmp}}"{{end}}
+        {{$tmp := $v.RequestPath}}{{with $tmp}}
+        request_path = "{{$tmp}}"{{end}}
+        {{$tmp := $v.Response}}{{with $tmp}}
+        response = "{{$tmp}}"{{end}}
+        {{$tmp := $v.Port}}{{with $tmp}}
+        port = "{{$tmp}}"{{end}}
+        {{$tmp := $v.ProxyHeader}}{{with $tmp}}
+        proxy_header = "{{$tmp}}"{{end}}
+        {{$tmp := $v.Request}}{{with $tmp}}
+        request = "{{$tmp}}"{{end}}
+    }{{end}}{{end}}
+    //beta
+}

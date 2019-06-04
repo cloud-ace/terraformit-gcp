@@ -1,0 +1,23 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, build with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+.terraform
+terraform.tfstate*
+CloudAsset-*
+terrafomit-gcp-import.sh*
+terrafomit-gcp-provider.tf*
+terrafomit-gcp.tf*
+.terrafomit-gcp.yaml
+terraform.tfstate.d*
+terrafomit-gcp-resource.tf
+client_secret*
+terrafomit-gcp

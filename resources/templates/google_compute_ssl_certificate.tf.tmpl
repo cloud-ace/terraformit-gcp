@@ -1,0 +1,22 @@
+resource "google_compute_ssl_certificate" "{{convertSlashAndDotToDash .Primary.ID}}"{
+    //You cannot get private_key
+    
+    //provider
+    {{ if eq .Provider "provider.google" }}provider = "google" {{ end }}
+    {{ if eq .Provider "provider.google-beta" }}provider = "google-beta" {{ end }}
+    
+    //required
+    certificate = "{{.Primary.Attributes.Certificate}}"
+    //cannot get private key from tfstate.Please set if you need.
+    //private_key = ""
+    
+    //optional
+    {{$tmp := .Primary.Attributes.Description}}{{with $tmp}}
+    description = "{{escapeDoubleQuote $tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.Name}}{{with $tmp}}
+    name = "{{$tmp}}"{{end}}           
+    //name_prefix Conflicts with name.
+    
+    //beta
+}

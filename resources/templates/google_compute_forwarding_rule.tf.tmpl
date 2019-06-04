@@ -1,0 +1,66 @@
+resource "google_compute_forwarding_rule" "{{convertSlashAndDotToDash .Primary.ID}}"{
+    //provider
+    {{ if eq .Provider "provider.google" }}provider = "google" {{ end }}
+    {{ if eq .Provider "provider.google-beta" }}provider = "google-beta" {{ end }}
+    
+    //required
+    name = "{{.Primary.Attributes.Name}}"
+    
+    //optional
+    {{$tmp := .Primary.Attributes.Description}}{{with $tmp}}
+    description = "{{escapeDoubleQuote $tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.IPAddress}}{{with $tmp}}
+    ip_address = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.IPProtocol}}{{with $tmp}}
+    ip_protocol = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.BackendService}}{{with $tmp}}
+    backend_service = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.IPVersion}}{{with $tmp}}
+    ip_version = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.LoadBalancingScheme}}{{with $tmp}}
+    load_balancing_scheme = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.Network}}{{with $tmp}}
+    network  = "{{$tmp}}"{{end}}
+    
+    {{$tmp := .Primary.Attributes.PortRange}}{{with $tmp}}
+    port_range  = "{{$tmp}}"{{end}}
+           
+    {{$tmp := .Primary.Attributes.Ports}}
+    {{with $tmp}}{{$length := len $tmp}}
+    ports = [{{range $i, $v := $tmp}}{{if lt (plus $i) $length }}"{{$v}}",{{else}}"{{$v}}"{{ end }}{{ end }}]{{end}}
+
+    {{$tmp := .Primary.Attributes.Subnetwork}}{{with $tmp}}
+    subnetwork = "{{$tmp}}"{{end}}
+    
+    {{$tmp := .Primary.Attributes.Target}}{{with $tmp}}
+    target = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.AllPorts}}{{with $tmp}}
+    all_ports = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.NetworkTier}}{{with $tmp}}
+    network_tier = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.ServiceLabel}}{{with $tmp}}
+    service_label = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.Region}}{{with $tmp}}
+    region = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.Project}}{{with $tmp}}
+    project = "{{$tmp}}"{{end}}
+
+    //beta
+     {{$tmp := .Primary.Attributes.Labels}}{{with $tmp}} 
+    labels {
+        {{range $i, $v := $tmp}}
+        {{$i}} = "{{$v}}"{{end}}
+     }{{end}}
+
+}

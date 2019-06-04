@@ -1,0 +1,15 @@
+resource "google_kms_crypto_key" "{{convertSlashAndDotToDash .Primary.ID}}"{
+    //required
+    name = "{{.Primary.Attributes.Name}}"
+    key_ring = "{{.Primary.Attributes.KeyRing}}"
+  
+    //optional
+    {{$tmp := .Primary.Attributes.RotationPeriod}}{{with $tmp}}
+    rotation_period = "{{$tmp}}"{{end}}
+
+    {{range $i, $v := .Primary.Attributes.VersionTemplate}}
+    version_template {
+        {{$tmp := $v.Algorithm}}{{with $tmp}}algorithm = "{{$tmp}}" {{end}}
+        {{$tmp := $v.ProtectionLevel}}{{with $tmp}}protection_level = "{{$tmp}}" {{end}}
+    }{{end}}
+}

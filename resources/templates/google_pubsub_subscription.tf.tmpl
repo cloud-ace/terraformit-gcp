@@ -1,0 +1,36 @@
+resource "google_pubsub_subscription" "{{convertSlashAndDotToDash .Primary.ID}}"{
+    //provider
+    {{ if eq .Provider "provider.google" }}provider = "google" {{ end }}
+    {{ if eq .Provider "provider.google-beta" }}provider = "google-beta" {{ end }}
+    
+    //required
+    name = "{{.Primary.Attributes.Name}}"
+    topic = "{{.Primary.Attributes.Topic}}"
+    
+    //optional
+    {{$tmp := .Primary.Attributes.Labels}}{{with $tmp}} 
+    labels {
+        {{range $i, $v := $tmp}}
+        {{$i}} = "{{$v}}"{{end}}
+    }{{end}}
+
+    {{$tmp := .Primary.Attributes.AckDeadlineSeconds}}{{with $tmp}}
+    ack_deadline_seconds = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.MessageRetentionDuration}}{{with $tmp}}
+    message_retention_duration = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.RetainAckedMessages}}{{with $tmp}}
+    retain_acked_messages = "{{$tmp}}"{{end}}
+           
+    {{$tmp := .Primary.Attributes.Project}}{{with $tmp}}
+    project = "{{$tmp}}"{{end}}
+
+    {{range $i, $v := .Primary.Attributes.PushConfig}}
+    push_config {
+        push_endpoint = "{{$v.PushEndpoint}}"
+        attributes = "{{$v.Attributes}}" 
+    }{{end}}
+
+    //beta
+}

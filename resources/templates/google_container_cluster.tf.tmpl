@@ -1,0 +1,234 @@
+resource "google_container_cluster" "{{convertSlashAndDotToDash .Primary.ID}}"{
+    //provider
+    {{ if eq .Provider "provider.google" }}provider = "google"{{ end }}
+    {{ if eq .Provider "provider.google-beta" }}provider = "google-beta"{{ end }}
+    
+    //required
+    name = "{{.Primary.Attributes.Name}}"
+    
+    //optional
+    {{$tmp := .Primary.Attributes.Location}}{{with $tmp}}
+    location = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.Zone}}{{with $tmp}}
+    //deprecated
+    //zone = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.Region}}{{with $tmp}}
+    //deprecated
+    //region = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.AdditionalZones}}
+    {{with $tmp}}{{$length := len $tmp}}
+    //deprecated
+    //additional_zones = [{{range $i, $v := $tmp}}{{if lt (plus $i) $length }}"{{$v}}",{{else}}"{{$v}}"{{ end }}{{ end }}]{{end}}
+
+    {{$tmp := .Primary.Attributes.NodeLocations}}
+    {{with $tmp}}{{$length := len $tmp}}
+    node_locations = [{{range $i, $v := $tmp}}{{if lt (plus $i) $length }}"{{$v}}",{{else}}"{{$v}}"{{ end }}{{ end }}]{{end}}
+
+    {{range $i, $v := .Primary.Attributes.AddonsConfig}}
+    addons_config {
+        {{$tmp := $v.HorizontalPodAutoscaling}}{{with $tmp}}
+        {{range $ii, $vv := $tmp}}
+        horizontal_pod_autoscaling {
+            {{$tmp1 := $vv.Disabled}}{{with $tmp1}}disabled = "{{$tmp1}}"{{end}}
+        }{{end}}{{end}}
+
+        {{$tmp := $v.HTTPLoadBalancing}}{{with $tmp}}
+        {{range $ii, $vv := $tmp}}
+        http_load_balancing {
+            {{$tmp1 := $vv.Disabled}}{{with $tmp1}}disabled = "{{$tmp1}}"{{end}}
+        }{{end}}{{end}}
+
+        {{$tmp := $v.KubernetesDashboard}}{{with $tmp}}
+        {{range $ii, $vv := $tmp}}
+        kubernetes_dashboard {
+            {{$tmp1 := $vv.Disabled}}{{with $tmp1}}disabled = "{{$tmp1}}"{{end}}
+        }{{end}}{{end}}
+
+        {{$tmp := $v.NetworkPolicyConfig}}{{with $tmp}}
+        {{range $ii, $vv := $tmp}}
+        network_policy_config  {
+            {{$tmp1 := $vv.Disabled}}{{with $tmp1}}disabled = "{{$tmp1}}"{{end}}
+        }{{end}}{{end}}
+
+        //istio_config
+        //cloudrun_config
+
+    }{{end}}
+
+    {{range $i, $v := .Primary.Attributes.ClusterAutoscaling}}
+    cluster_autoscaling {
+         {{$tmp := $v.Enabled}}{{with $tmp}}enabled = "{{$tmp}}"{{end}}
+
+        {{$tmp := $v.ResourceLimits}}{{with $tmp}}
+        {{range $ii, $vv := $tmp}}
+        resource_limits {
+            {{$tmp1 := $vv.ResourceType}}{{with $tmp1}}resource_type = "{{$tmp1}}"{{end}}
+            {{$tmp1 := $vv.Minimum}}{{with $tmp1}}minimum = "{{$tmp1}}"{{end}}
+            {{$tmp1 := $vv.Maximum}}{{with $tmp1}}maximum = "{{$tmp1}}"{{end}}
+        }{{end}}{{end}}
+    }{{end}}
+    
+    //database_encryption
+
+    {{$tmp := .Primary.Attributes.Description}}{{with $tmp}}
+    description = "{{escapeDoubleQuote $tmp}}"{{end}}
+
+    //default_max_pods_per_node
+    //enable_binary_authorization
+
+    {{$tmp := .Primary.Attributes.EnableKubernetesAlpha}}{{with $tmp}}
+    enable_kubernetes_alpha = "{{$tmp}}"{{end}}
+     
+     //enable_tpu
+
+    {{$tmp := .Primary.Attributes.EnableLegacyAbac}}{{with $tmp}}
+    enable_legacy_abac = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.InitialNodeCount}}{{with $tmp}}
+    initial_node_count = "{{$tmp}}"{{end}}
+
+    {{range $i, $v := .Primary.Attributes.IPAllocationPolicy}}
+    ip_allocation_policy {
+         {{$tmp := $v.UseIPAliases}}{{with $tmp}}use_ip_aliases = "{{$tmp}}"{{end}}
+         {{$tmp := $v.ClusterSecondaryRangeName}}{{with $tmp}}//cluster_secondary_range_name = "{{$tmp}}"{{end}}
+         {{$tmp := $v.ServicesSecondaryRangeName}}{{with $tmp}}//services_secondary_range_name = "{{$tmp}}"{{end}}
+         {{$tmp := $v.ClusterIpv4CidrBlock}}{{with $tmp}}cluster_ipv4_cidr_block = "{{$tmp}}"{{end}}
+         {{$tmp := $v.NodeIpv4CidrBlock}}{{with $tmp}}node_ipv4_cidr_block = "{{$tmp}}"{{end}}
+         {{$tmp := $v.ServicesIpv4CidrBlock}}{{with $tmp}}services_ipv4_cidr_block = "{{$tmp}}"{{end}}
+         {{$tmp := $v.CreateSubnetwork}}{{with $tmp}}create_subnetwork = "{{$tmp}}"{{end}}
+         {{$tmp := $v.SubnetworkName}}{{with $tmp}}subnetwork_name = "{{$tmp}}"{{end}}       
+    }{{end}}
+
+    {{$tmp := .Primary.Attributes.LoggingService}}{{with $tmp}}
+    logging_service = "{{$tmp}}"{{end}}
+
+    {{range $i, $v := .Primary.Attributes.MaintenancePolicy}}
+    maintenance_policy  {
+
+        {{$tmp := $v.DailyMaintenanceWindow}}{{with $tmp}}
+        {{range $ii, $vv := $tmp}}
+        daily_maintenance_window {
+            {{$tmp1 := $vv.StartTime}}{{with $tmp1}}start_time = "{{$tmp1}}"{{end}}
+        }{{end}}{{end}}
+    }{{end}}
+
+    {{range $i, $v := .Primary.Attributes.MasterAuth}}
+    master_auth  {
+        {{$tmp := $v.Password}}{{with $tmp}}password  = "{{$tmp}}"{{end}}
+        {{$tmp := $v.Username}}{{with $tmp}}username  = "{{$tmp}}"{{end}}
+
+        {{$tmp := $v.ClientCertificateConfig}}{{with $tmp}}
+        {{range $ii, $vv := $tmp}}
+        client_certificate_config {
+        }{{end}}{{end}}
+    }{{end}}
+
+    {{range $i, $v := .Primary.Attributes.MasterAuthorizedNetworksConfig}}
+    master_authorized_networks_config   {
+        {{$tmp := $v.CidrBlocks}}{{with $tmp}}
+        {{range $ii, $vv := $tmp}}
+        cidr_blocks {
+              {{$tmp1 := $vv.CidrBlock}}{{with $tmp1}}cidr_block = "{{$tmp1}}"{{end}}
+                {{$tmp1 := $vv.DisplayName}}{{with $tmp1}}display_name = "{{$tmp1}}"{{end}}
+        }{{end}}{{end}}
+    }{{end}}
+
+    //min_master_version
+    
+    {{$tmp := .Primary.Attributes.MonitoringService}}{{with $tmp}}
+    monitoring_service = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.Network}}{{with $tmp}}
+    network = "{{$tmp}}"{{end}}
+
+    {{range $i, $v := .Primary.Attributes.NetworkPolicy}}
+    network_policy  {
+        {{$tmp := $v.Enabled}}{{with $tmp}}enabled  = "{{$tmp}}"{{end}}
+        {{$tmp := $v.Provider}}{{with $tmp}}provider  = "{{$tmp}}"{{end}}
+    }{{end}}
+
+    {{range $i, $v := .Primary.Attributes.NodeConfig}}
+    node_config    {
+        {{$tmp := $v.DiskSizeGb}}{{with $tmp}}disk_size_gb = "{{$tmp}}"{{end}}
+        {{$tmp := $v.DiskType}}{{with $tmp}}disk_type   = "{{$tmp}}"{{end}}
+
+       {{$tmp := $v.GuestAccelerator}}{{with $tmp}}
+        {{range $ii, $vv := $tmp}}
+        guest_accelerator {
+            {{$tmp1 := $vv.Type}}{{with $tmp1}}type = "{{$tmp1}}"{{end}}
+            {{$tmp1 := $vv.Count}}{{with $tmp1}}count = "{{$tmp1}}"{{end}}
+        }{{end}}{{end}}
+
+        {{$tmp := $v.ImageType}}{{with $tmp}}image_type   = "{{$tmp}}"{{end}}
+
+        {{$tmp := $v.Labels}}{{with $tmp}} 
+        labels {
+            {{range $ii, $vv := $tmp}}
+            {{$ii}} = "{{$vv}}"{{end}}
+        }{{end}}
+
+        //local_ssd_count
+        {{$tmp := $v.MachineType}}{{with $tmp}}machine_type   = "{{$tmp}}"{{end}}
+
+        {{$tmp := $v.Metadata}}{{with $tmp}} 
+        metadata {
+            {{range $ii, $vv := $tmp}}
+            {{$ii}} = "{{$vv}}"{{end}}
+        }{{end}}
+
+        //min_cpu_platform
+
+        {{$length := len $v.OauthScopes}}
+        {{with $v.OauthScopes}}oauth_scopes = [{{range $ii, $vv := $v.OauthScopes}}{{if lt (plus $ii) $length  }}"{{$vv}}",{{else}}"{{$vv}}"{{ end }}{{ end }}]{{end}}
+
+        {{$tmp := $v.Preemptible}}{{with $tmp}}preemptible   = "{{$tmp}}"{{end}}
+        {{$tmp := $v.ServiceAccount}}{{with $tmp}}service_account  = "{{$tmp}}"{{end}}
+
+        {{$length := len $v.OauthScopes}}
+        {{with $v.Tags}}tags = [{{range $ii, $vv := $v.Tags}}{{if lt (plus $ii) $length  }}"{{$vv}}",{{else}}"{{$vv}}"{{ end }}{{ end }}]{{end}}
+
+       {{$tmp := $v.Taint}}{{with $tmp}}
+        {{range $ii, $vv := $tmp}}
+        taint {
+            {{$tmp1 := $vv.Key}}{{with $tmp1}}key = "{{$tmp1}}"{{end}}
+            {{$tmp1 := $vv.Value}}{{with $tmp1}}value = "{{$tmp1}}"{{end}}
+            {{$tmp1 := $vv.Effect}}{{with $tmp1}}effect = "{{$tmp1}}"{{end}}
+        }{{end}}{{end}}
+
+        {{$tmp := $v.WorkloadMetadataConfig}}{{with $tmp}}workload_metadata_config = "{{$tmp}}"{{end}}
+
+    }{{end}}
+
+    //Warning: node pools defined inside a cluster can't be changed (or added/removed) after cluster creation without deleting and recreating the entire cluster.
+    //node_pool
+
+    {{$tmp := .Primary.Attributes.NodeVersion}}{{with $tmp}}
+    node_version = "{{$tmp}}"{{end}}
+
+    //pod_security_policy_config 
+
+    {{$tmp := .Primary.Attributes.Project}}{{with $tmp}}
+    project = "{{$tmp}}"{{end}}
+
+    {{range $i, $v := .Primary.Attributes.PrivateClusterConfig}}
+    private_cluster_config  {
+        {{$tmp := $v.EnablePrivateEndpoint}}{{with $tmp}}enable_private_endpoint  = "{{$tmp}}"{{end}}
+        {{$tmp := $v.EnablePrivateNodes}}{{with $tmp}}enable_private_nodes  = "{{$tmp}}"{{end}}
+        {{$tmp := $v.MasterIpv4CidrBlock}}{{with $tmp}}master_ipv4_cidr_block  = "{{$tmp}}"{{end}}
+    }{{end}}
+
+    //remove_default_node_pool
+
+    {{$tmp := .Primary.Attributes.ResourceLabels}}{{with $tmp}} 
+    resource_labels {
+        {{range $i, $v := $tmp}}
+        {{$i}} = "{{$v}}"{{end}}
+    }{{end}}
+
+    {{$tmp := .Primary.Attributes.Subnetwork}}{{with $tmp}}
+    subnetwork = "{{$tmp}}"{{end}}
+
+}

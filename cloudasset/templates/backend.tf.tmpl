@@ -1,0 +1,6 @@
+terraform {
+  backend "{{.BackendType}}" {
+    {{if eq .BackendType "local"}}path  = "{{.BackendLocation}}"{{end}}
+    {{if eq .BackendType "gcs"}}bucket  = "{{.BackendLocation}}"{{end}}
+  }
+}

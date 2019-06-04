@@ -1,0 +1,51 @@
+resource "google_compute_autoscaler" "{{convertSlashAndDotToDash .Primary.ID}}"{
+    //provider
+    {{ if eq .Provider "provider.google" }}provider = "google" {{ end }}
+    {{ if eq .Provider "provider.google-beta" }}provider = "google-beta" {{ end }}
+    
+    //required
+    name = "{{.Primary.Attributes.Name}}"
+    target = "{{.Primary.Attributes.Target}}"
+
+    {{range $i, $v := .Primary.Attributes.AutoscalingPolicy}}
+    autoscaling_policy {
+        //required
+        max_replicas    = "{{$v.MaxReplica}}"
+        min_replicas    = "{{$v.MinReplica}}"
+        //optional
+        {{$tmp := $v.CooldownPeriod}}{{with $tmp}}
+        cooldown_period = "{{$tmp}}"{{end}}
+
+        {{$tmp :=  $v.CPUTarget}}{{with $tmp}}
+            cpu_utilization {
+                target = "{{$tmp}}"
+            }{{end}}
+
+        {{$tmp := $v.LoadBalancingTarget}}{{with $tmp}}
+            load_balancing_utilization {
+                target = "{{$tmp}}"
+            }{{end}}
+
+        {{$tmp :=  $v.Metric}}{{with $tmp}}
+        {{range $ii, $vv := $tmp}}
+        metric {
+            name = "{{$vv.Name}}"
+            {{with $vv.Type}}type = "{{$vv.Type}}"{{end}}
+            {{with $vv.Target}}target = "{{$vv.Target}}"{{end}}
+            //beta
+            //single_instance_assignment
+            //filter
+        }{{end}}{{end}}
+    }{{end}}
+    //optional
+    {{$tmp := .Primary.Attributes.Description}}{{with $tmp}}
+    description = "{{escapeDoubleQuote $tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.Zone}}{{with $tmp}}
+    zone = "{{$tmp}}"{{end}}
+           
+    {{$tmp := .Primary.Attributes.Project}}{{with $tmp}}
+    project = "{{$tmp}}"{{end}}
+
+    //beta
+}

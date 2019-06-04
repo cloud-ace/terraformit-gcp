@@ -1,0 +1,9 @@
+provider "google" {
+  project = "{{createProject .Name}}"
+  region = "{{.DefaultRegion}}"
+}
+
+provider "google-beta" {
+  project = "{{createProject .Name}}"
+  region = "{{.DefaultRegion}}"
+}

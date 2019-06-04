@@ -1,0 +1,102 @@
+resource "google_sql_database_instance" "{{convertSlashAndDotToDash .Primary.ID}}"{
+    //provider
+    {{ if eq .Provider "provider.google" }}provider = "google"{{ end }}
+    {{ if eq .Provider "provider.google-beta" }}provider = "google-beta"{{ end }}
+    
+    //required
+    region = "{{.Primary.Attributes.Region}}"
+
+     {{range $i, $v := .Primary.Attributes.Settings}}
+    settings {
+         {{$tmp := $v.Tier}}{{with $tmp}}tier = "{{$tmp}}"{{end}}
+         {{$tmp := $v.ActivationPolicy}}{{with $tmp}}activation_policy = "{{$tmp}}"{{end}}
+         {{$length := len $v.AuthorizedGaeApplications}}{{with $v.AuthorizedGaeApplications}}authorized_gae_applications = [{{range $ii, $vv := $v.AuthorizedGaeApplications}}{{if lt (plus $ii) $length  }}"{{$vv}}",{{else}}"{{$vv}}"{{ end }}{{ end }}]{{end}}
+         {{$tmp := $v.AvailabilityType}}{{with $tmp}}availability_type = "{{$tmp}}"{{end}}
+         {{$tmp := $v.CrashSafeReplication}}{{with $tmp}}crash_safe_replication  = "{{$tmp}}"{{end}}
+         {{$tmp := $v.DiskAutoresize}}{{with $tmp}}disk_autoresize  = "{{$tmp}}"{{end}}
+         {{$tmp := $v.DiskSize}}{{with $tmp}}disk_size = "{{$tmp}}"{{end}}
+         {{$tmp := $v.DiskType}}{{with $tmp}}disk_type = "{{$tmp}}"{{end}}
+         {{$tmp := $v.PricingPlan}}{{with $tmp}}pricing_plan = "{{$tmp}}"{{end}}  
+         {{$tmp := $v.ReplicationType}}{{with $tmp}}replication_type = "{{$tmp}}"{{end}}
+         {{$tmp := $v.UserLabels}}{{with $tmp}} 
+         user_labels {
+            {{range $ii, $vv := $tmp}}
+            {{$ii}} = "{{$vv}}"{{end}}
+         }{{end}}
+
+        {{$tmp := $v.BackupConfiguration}}{{with $tmp}}
+        {{range $ii, $vv := $tmp}}
+        backup_configuration {
+              {{$tmp1 := $vv.BinaryLogEnabled}}{{with $tmp1}}binary_log_enabled = "{{$tmp1}}"{{end}}
+              {{$tmp1 := $vv.Enabled}}{{with $tmp1}}enabled = "{{$tmp1}}"{{end}}
+              {{$tmp1 := $vv.StartTime}}{{with $tmp1}}start_time = "{{$tmp1}}"{{end}}
+        }{{end}}{{end}}
+
+        {{$tmp := $v.DatabaseFlags}}{{with $tmp}}
+        {{range $ii, $vv := $tmp}}
+        database_flags {
+              {{$tmp1 := $vv.Name}}{{with $tmp1}}name = "{{$tmp1}}"{{end}}
+              {{$tmp1 := $vv.Value}}{{with $tmp1}}value = "{{$tmp1}}"{{end}}
+        }{{end}}{{end}}
+
+        {{$tmp := $v.IPConfiguration}}{{with $tmp}}
+        {{range $ii, $vv := $tmp}}
+        ip_configuration {
+              {{$tmp1 := $vv.Ipv4Enabled}}{{with $tmp1}}ipv4_enabled = "{{$tmp1}}"{{end}}
+              {{$tmp1 := $vv.PrivateNetwork}}{{with $tmp1}}private_network = "{{$tmp1}}"{{end}}
+              {{$tmp1 := $vv.RequireSsl}}{{with $tmp1}}require_ssl = "{{$tmp1}}"{{end}}
+              {{$tmp1 := $vv.AuthorizedNetworks}}{{with $tmp1}}
+              {{range $iii, $vvv := $tmp1}}
+              authorized_networks {
+              {{$tmp2 := $vvv.ExpirationTime}}{{with $tmp2}}expiration_time = "{{$tmp2}}"{{end}}
+              {{$tmp2 := $vvv.Name}}{{with $tmp2}}name = "{{$tmp2}}"{{end}}
+              {{$tmp2 := $vvv.Value}}{{with $tmp2}}value = "{{$tmp2}}"{{end}}      
+              }{{end}}{{end}}
+        }{{end}}{{end}}
+
+        {{$tmp := $v.LocationPreference}}{{with $tmp}}
+        {{range $ii, $vv := $tmp}}
+        location_preference {
+              {{$tmp1 := $vv.FollowGaeApplication}}{{with $tmp1}}follow_gae_application = "{{$tmp1}}"{{end}}
+              {{$tmp1 := $vv.Zone}}{{with $tmp1}}zone = "{{$tmp1}}"{{end}}
+        }{{end}}{{end}}
+
+        {{$tmp := $v.MaintenanceWindow}}{{with $tmp}}
+        {{range $ii, $vv := $tmp}}
+        maintenance_window {
+              {{$tmp1 := $vv.Day}}{{with $tmp1}}day = "{{$tmp1}}"{{end}}
+              {{$tmp1 := $vv.Hour}}{{with $tmp1}}hour = "{{$tmp1}}"{{end}}
+              {{$tmp1 := $vv.UpdateTrack}}{{with $tmp1}}update_track = "{{$tmp1}}"{{end}}
+        }{{end}}{{end}}
+
+    }{{end}}
+
+    //optional
+    {{range $i, $v := .Primary.Attributes.ReplicaConfiguration}}
+    replica_configuration {
+         {{$tmp := $v.CaCertificate}}{{with $tmp}}ca_certificate = "{{$tmp}}"{{end}}
+         {{$tmp := $v.ClientCertificate}}{{with $tmp}}client_certificate = "{{$tmp}}"{{end}}
+         {{$tmp := $v.ClientKey}}{{with $tmp}}client_key = "{{$tmp}}"{{end}}                 
+         {{$tmp := $v.ConnectRetryInterval}}{{with $tmp}}connect_retry_interval = "{{$tmp}}"{{end}}
+         {{$tmp := $v.DumpFilePath}}{{with $tmp}}dump_file_path = "{{$tmp}}"{{end}}
+         {{$tmp := $v.FailoverTarget}}{{with $tmp}}failover_target = "{{$tmp}}"{{end}}    
+         {{$tmp := $v.MasterHeartbeatPeriod}}{{with $tmp}}master_heartbeat_period = "{{$tmp}}"{{end}}
+         {{$tmp := $v.Password}}{{with $tmp}}password = "{{$tmp}}"{{end}}               
+         {{$tmp := $v.SslCipher}}{{with $tmp}}ssl_cipher = "{{$tmp}}"{{end}}
+         {{$tmp := $v.Username}}{{with $tmp}}username = "{{$tmp}}"{{end}}
+         {{$tmp := $v.VerifyServerCertificate}}{{with $tmp}}verify_server_certificate = "{{$tmp}}"{{end}} 
+    }{{end}}
+
+    {{$tmp := .Primary.Attributes.DatabaseVersion}}{{with $tmp}}
+    database_version = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.Name}}{{with $tmp}}
+    name = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.MasterInstanceName}}{{with $tmp}}
+    master_instance_name = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.Project}}{{with $tmp}}
+    project = "{{$tmp}}"{{end}}
+
+}

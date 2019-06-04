@@ -1,0 +1,37 @@
+resource "google_compute_instance_group_manager" "{{convertSlashAndDotToDash .Primary.Attributes.Zone}}-{{convertSlashAndDotToDash .Primary.Attributes.Name}}"{
+    //provider
+    {{ if eq .Provider "provider.google" }}provider = "google" {{ end }}
+    {{ if eq .Provider "provider.google-beta" }}provider = "google-beta" {{ end }}
+    
+    //required
+    base_instance_name = "{{.Primary.Attributes.BaseInstanceName}}"
+    instance_template = "{{.Primary.Attributes.InstanceTemplate}}"
+    name = "{{.Primary.Attributes.Name}}"
+    zone = "{{.Primary.Attributes.Zone}}"
+
+    //optional
+    {{$tmp := .Primary.Attributes.Description}}{{with $tmp}}
+    description = "{{escapeDoubleQuote $tmp}}"{{end}}
+    {{$tmp := .Primary.Attributes.NamedPort}}{{with $tmp}}
+        {{range $i, $v := $tmp}}
+        named_port {
+            //required
+            name = "{{$v.Name}}"
+            port = "{{$v.Port}}"
+        }{{end}}{{end}}
+    {{$tmp := .Primary.Attributes.TargetSize}}{{with $tmp}}
+    target_size = "{{$tmp}}"{{end}}
+    //target_pools
+    {{$tmp := .Primary.Attributes.TargetPools}}
+    {{with $tmp}}{{$length := len $tmp}}
+    target_pools = [{{range $i, $v := $tmp}}{{if lt (plus $i) $length }}"{{$v}}",{{else}}"{{$v}}"{{ end }}{{ end }}]{{end}}
+    {{$tmp := .Primary.Attributes.WaitForInstances}}{{with $tmp}}
+    wait_for_instances = "{{$tmp}}"{{end}}    
+
+    {{ if eq .Provider "provider.google-beta" }}
+    //version = "{{.Primary.Attributes.Version}}"
+    //auto_healing_policies
+    //update_policy 
+    {{ end }}
+
+}

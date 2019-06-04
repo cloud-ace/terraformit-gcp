@@ -1,0 +1,62 @@
+resource "google_compute_firewall" "{{convertSlashAndDotToDash .Primary.ID}}"{
+    //provider
+    {{ if eq .Provider "provider.google" }}provider = "google"{{ end }}
+    {{ if eq .Provider "provider.google-beta" }}provider = "google-beta"{{ end }}
+    //required
+    name = "{{.Primary.Attributes.Name}}"
+    network = "{{.Primary.Attributes.Network}}"
+    //optional
+    {{range $i, $v := .Primary.Attributes.Allow}}{{$length := len $v.Ports}}
+    allow {
+        protocol = "{{$v.Protocol}}" 
+        {{with $v.Ports}}ports = [{{range $ii, $vv := $v.Ports}}{{if lt (plus $ii) $length  }}"{{$vv}}",{{else}}"{{$vv}}"{{ end }}{{ end }}]{{end}}
+    }{{end}}
+   {{range $i, $v := .Primary.Attributes.Deny}}{{$length := len $v.Ports}}
+    deny {
+        protocol = "{{$v.Protocol}}"
+        {{with $v.Ports}}ports = [{{range $ii, $vv := $v.Ports}}{{if lt (plus $ii) $length  }}"{{$vv}}",{{else}}"{{$vv}}"{{ end }}{{ end }}]{{end}}
+    }{{end}}   
+    {{$tmp := .Primary.Attributes.Description}}{{with $tmp}}
+    description = "{{escapeDoubleQuote $tmp}}"{{end}}
+     
+     {{$tmp := .Primary.Attributes.DestinationRanges}}
+     {{with $tmp}}{{$length := len $tmp}}
+    destination_ranges = [{{range $i, $v := $tmp}}{{if lt (plus $i) $length }}"{{$v}}",{{else}}"{{$v}}"{{ end }}{{ end }}]{{end}}
+   
+    {{$tmp := .Primary.Attributes.Direction}}{{with $tmp}}
+    direction = "{{$tmp}}"{{end}}
+   
+    {{$tmp := .Primary.Attributes.Disabled}}{{with $tmp}}
+    disabled = "{{$tmp}}"{{end}}
+   
+    {{$tmp := .Primary.Attributes.Priority}}{{with $tmp}}
+    priority = "{{$tmp}}"{{end}}
+   
+    {{$tmp := .Primary.Attributes.SourceRanges}}
+    {{with $tmp}}{{$length := len $tmp}}
+    source_ranges = [{{range $i, $v := $tmp}}{{if lt (plus $i) $length }}"{{$v}}",{{else}}"{{$v}}"{{ end }}{{ end }}]{{end}}
+
+    {{$tmp := .Primary.Attributes.SourceServiceAccounts}}
+    {{with $tmp}}{{$length := len $tmp}}
+    source_service_accounts = [{{range $i, $v := $tmp}}{{if lt (plus $i) $length }}"{{$v}}",{{else}}"{{$v}}"{{ end }}{{ end }}]{{end}}
+
+    {{$tmp := .Primary.Attributes.SourceTags}}
+    {{with $tmp}}{{$length := len $tmp}}
+    source_tags = [{{range $i, $v := $tmp}}{{if lt (plus $i) $length }}"{{$v}}",{{else}}"{{$v}}"{{ end }}{{ end }}]{{end}}
+
+    {{$tmp := .Primary.Attributes.TargetTags}}
+    {{with $tmp}}{{$length := len $tmp}}
+    target_tags = [{{range $i, $v := $tmp}}{{if lt (plus $i) $length }}"{{$v}}",{{else}}"{{$v}}"{{ end }}{{ end }}]{{end}}
+
+    {{$tmp := .Primary.Attributes.TargetServiceAccounts}}
+    {{with $tmp}}{{$length := len $tmp}}
+    target_service_accounts = [{{range $i, $v := $tmp}}{{if lt (plus $i) $length }}"{{$v}}",{{else}}"{{$v}}"{{ end }}{{ end }}]{{end}}
+
+    {{$tmp := .Primary.Attributes.Project}}{{with $tmp}}
+    project = "{{$tmp}}"{{end}}
+
+    //beta
+    {{ if eq .Provider "provider.google-beta" }}
+    {{$tmp := .Primary.Attributes.EnableLogging}}{{with $tmp}}
+    enable_logging = "{{$tmp}}"{{end}}{{ end }}
+}

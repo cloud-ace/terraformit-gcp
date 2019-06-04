@@ -1,0 +1,34 @@
+resource "google_compute_subnetwork" "{{convertSlashAndDotToDash .Primary.Attributes.Name}}"{
+    //provider
+    {{ if eq .Provider "provider.google" }}provider = "google"{{ end }}
+    {{ if eq .Provider "provider.google-beta" }}provider = "google-beta"{{ end }}
+    
+    //required
+    ip_cidr_range = "{{.Primary.Attributes.IPCidrRange}}"
+    name = "{{.Primary.Attributes.Name}}"
+    network = "{{.Primary.Attributes.Network}}"
+    
+    //optional
+    {{$tmp := .Primary.Attributes.Description}}{{with $tmp}}
+    description = "{{escapeDoubleQuote $tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.EnableFlowLogs}}{{with $tmp}}
+    enable_flow_logs = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.PrivateIPGoogleAccess}}{{with $tmp}}
+    private_ip_google_access = "{{$tmp}}"{{end}}
+           
+    {{$tmp := .Primary.Attributes.Project}}{{with $tmp}}
+    project = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.Region}}{{with $tmp}}
+    region = "{{$tmp}}"{{end}}
+
+    {{range $i, $v := .Primary.Attributes.SecondaryIPRange}}
+        secondary_ip_range {
+            range_name = "{{$v.Range_name }}"
+            ip_cidr_range = "{{$v.Ip_cidr_range }}"
+        }{{end}}
+
+    //beta
+}

@@ -1,0 +1,52 @@
+resource "google_compute_url_map" "{{convertSlashAndDotToDash .Primary.ID}}"{
+    //provider
+    {{ if eq .Provider "provider.google" }}provider = "google"{{ end }}
+    {{ if eq .Provider "provider.google-beta" }}provider = "google-beta"{{ end }}
+    //required
+    name = "{{.Primary.Attributes.Name}}"
+    default_service  = "{{.Primary.Attributes.DefaultService}}"
+    //optional
+    {{$tmp := .Primary.Attributes.Description}}{{with $tmp}}
+    description = "{{escapeDoubleQuote $tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.Project}}{{with $tmp}}
+    project = "{{$tmp}}"{{end}}
+
+    //host_rule
+    {{range $i, $v := .Primary.Attributes.HostRule}}{{$length := len $v.Hosts}}
+    host_rule {
+        {{$tmp := $v.Description}}{{with $tmp}}description = "{{$tmp}}" {{end}}
+        {{with $v.Hosts}}hosts = [{{range $ii, $vv := $v.Hosts}}{{if lt (plus $ii) $length  }}"{{$vv}}",{{else}}"{{$vv}}"{{ end }}{{ end }}]{{end}}
+        {{$tmp := $v.PathMatcher}}{{with $tmp}}path_matcher = "{{$tmp}}" {{end}}
+    }{{end}}
+
+    //path_,atch
+    {{range $i, $v := .Primary.Attributes.PathMatcher}}
+    path_matcher {
+        {{$tmp := $v.DefaultService}}{{with $tmp}}default_service = "{{$tmp}}"{{end}}
+        {{$tmp := $v.Description}}{{with $tmp}}description = "{{escapeDoubleQuote $tmp}}"{{end}}
+        {{$tmp := $v.Name}}{{with $tmp}}name  = "{{$tmp}}"{{end}}
+
+        {{$tmp := $v.PathRule}}{{with $tmp}}
+        {{range $ii, $vv := $tmp}}
+        path_rule{
+            service = "{{$vv.Service}}"
+            paths = [{{range $iii, $vvv := $vv.Paths}}{{$length := len $vv.Paths}}{{if lt (plus $iii) $length}}"{{$vvv}}",{{else}}"{{$vvv}}"{{ end }}{{ end }}]
+        }{{end}}{{end}}
+    }{{end}}
+
+    //test
+    {{range $i, $v := .Primary.Attributes.Test}}
+    test {
+        {{$tmp := $v.Description}}{{with $tmp}}description = "{{$tmp}}" {{end}}
+        {{$tmp := $v.Host}}{{with $tmp}}host = "{{$tmp}}" {{end}}        
+        {{$tmp := $v.Path}}{{with $tmp}}path = "{{$tmp}}" {{end}}       
+        {{$tmp := $v.Service}}{{with $tmp}}service = "{{$tmp}}" {{end}}       
+    }{{end}}
+     
+
+
+    //beta
+    {{ if eq .Provider "provider.google-beta" }}
+    {{ end }}
+}

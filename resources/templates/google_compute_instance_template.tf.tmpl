@@ -1,0 +1,96 @@
+resource "google_compute_instance_template" "{{convertSlashAndDotToDash .Primary.ID}}"{
+    //provider
+    {{ if eq .Provider "provider.google" }}provider = "google"{{ end }}
+    {{ if eq .Provider "provider.google-beta" }}provider = "google-beta"{{ end }}
+    //required
+    machine_type = "{{.Primary.Attributes.MachineType}}"
+    {{range $i, $v := .Primary.Attributes.Disk}}
+    disk {
+        {{$tmp := $v.DiskAutoDelete}}{{with $tmp}}auto_delete = "{{$tmp}}"{{end}}
+        {{$tmp := $v.DiskBoot}}{{with $tmp}}boot = "{{$tmp}}"{{end}}
+        {{$tmp := $v.DiskDeviceName}}{{with $tmp}}device_name = "{{$tmp}}"{{end}}
+        {{$tmp := $v.DiskDiskName}}{{with $tmp}}disk_name = "{{$tmp}}"{{end}}
+        {{$tmp := $v.DiskDiskSizeGb}}{{with $tmp}}disk_size_gb = "{{$tmp}}"{{end}}
+        {{$tmp := $v.DiskDiskType}}{{with $tmp}}disk_type = "{{$tmp}}"{{end}}
+        {{$tmp := $v.DiskInterface}}{{with $tmp}}interface = "{{$tmp}}"{{end}}
+        {{$tmp := $v.DiskMode}}{{with $tmp}}mode = "{{$tmp}}"{{end}}
+        {{$tmp := $v.DiskSource}}{{with $tmp}}source = "{{$tmp}}"{{end}}
+        {{$tmp := $v.DiskSourceImage}}{{with $tmp}}source_image = "{{$tmp}}"{{end}}
+        {{$tmp := $v.DiskType}}{{with $tmp}}type = "{{$tmp}}"{{end}}
+        {{range $ii, $vv := $v.DiskDiskEncryptionKey}}
+        disk_encryption_key{
+            kms_key_self_link = "{{$vv.KmsKeySelfLink}}"
+        }{{end}}        
+    }{{end}}
+
+    {{range $i, $v := .Primary.Attributes.NetworkInterface}}
+    network_interface {
+        {{$tmp := $v.Network}}{{with $tmp}}network = "{{$tmp}}"{{end}}
+        {{$tmp := $v.Subnetwork}}{{with $tmp}}subnetwork = "{{$tmp}}"{{end}}
+        {{$tmp := $v.SubnetworkProject}}{{with $tmp}}subnetwork_project = "{{$tmp}}"{{end}}
+        {{$tmp := $v.NetworkIP}}{{with $tmp}}network_ip = "{{$tmp}}"{{end}}
+
+        {{$tmp := $v.AccessConfigNatIP}}{{$tmp1 := $v.AccessConfigNetworkTier}}{{with $tmp}}
+        {{range $ii, $vv := $tmp}}
+        access_config{
+            nat_ip = "{{$vv}}"
+            {{range $iii, $vvv := $tmp1}}
+            {{ if eq $iii $ii }}network_tier = "{{$vvv}}"{{end}}
+            {{end}}
+        }{{end}}{{end}}
+    }{{end}}
+    
+    //optional
+    {{$tmp := .Primary.Attributes.Name}}{{with $tmp}}
+    name = "{{$tmp}}"{{end}}
+    //name_prefix
+
+    {{$tmp := .Primary.Attributes.CanIPForward}}{{with $tmp}}
+    can_ip_forward = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.Description}}{{with $tmp}}
+    description = "{{escapeDoubleQuote $tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.InstanceDescription}}{{with $tmp}}
+    instance_description = "{{escapeDoubleQuote $tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.Labels}}{{with $tmp}} 
+    labels {
+        {{range $i, $v := $tmp}}
+        {{$i}} = "{{$v}}"{{end}}
+    }{{end}}
+    {{$tmp := .Primary.Attributes.Metadata}}{{with $tmp}} 
+     metadata {
+        //改行は\n手動で変換する
+        //metadata_startup_script
+        {{range $i, $v := $tmp}}
+        {{$i}} = "{{$v}}"
+        {{end}}
+    }{{end}}
+
+    {{$tmp := .Primary.Attributes.Project}}{{with $tmp}}
+    project = "{{$tmp}}"{{end}}
+
+    //region
+    {{range $i, $v := .Primary.Attributes.Scheduling}}
+    scheduling {
+        {{$tmp := $v.AutomaticRestart}}{{with $tmp}}automatic_restart = "{{$tmp}}"{{end}}
+        {{$tmp := $v.OnHostMaintenance}}{{with $tmp}}on_host_maintenance = "{{$tmp}}"{{end}}
+        {{$tmp := $v.Preemptible}}{{with $tmp}}preemptible = "{{$tmp}}"{{end}}
+    }{{end}}
+
+    {{range $i, $v := .Primary.Attributes.ServiceAccount}}{{$length := len $v.Scopes}}
+    service_account {
+        email = "{{$v.Email}}" 
+        {{with $v.Scopes}}scopes = [{{range $ii, $vv := $v.Scopes}}{{if lt (plus $ii) $length  }}"{{$vv}}",{{else}}"{{$vv}}"{{ end }}{{ end }}]{{end}}
+    }{{end}}
+
+    {{$tmp := .Primary.Attributes.Tags}}
+    {{with $tmp}}{{$length := len $tmp}}
+    tags = [{{range $i, $v := $tmp}}{{if lt (plus $i) $length }}"{{$v}}",{{else}}"{{$v}}"{{ end }}{{ end }}]{{end}}
+
+    //guest_accelerator
+    {{$tmp := .Primary.Attributes.MinCPUPlatform}}{{with $tmp}}
+    min_cpu_platform  = "{{$tmp}}"{{end}}
+
+}

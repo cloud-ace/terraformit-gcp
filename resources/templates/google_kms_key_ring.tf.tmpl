@@ -1,0 +1,9 @@
+resource "google_kms_key_ring" "{{convertSlashAndDotToDash .Primary.ID}}"{
+    //required
+    name = "{{.Primary.Attributes.Name}}"
+    location = "{{.Primary.Attributes.Location}}"
+  
+    //optional
+    {{$tmp := .Primary.Attributes.Project}}{{with $tmp}}
+    project = "{{$tmp}}"{{end}}
+}

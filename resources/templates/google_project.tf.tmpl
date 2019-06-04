@@ -1,0 +1,24 @@
+resource "google_project" "{{convertSlashAndDotToDash .Primary.ID}}"{
+    //required
+    name = "{{.Primary.Attributes.Name}}"
+    project_id = "{{.Primary.Attributes.ProjectID}}"
+    //optional
+    {{$tmp := .Primary.Attributes.OrgID}}{{with $tmp}}
+    org_id = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.FolderID}}{{with $tmp}}
+    folder_id =  "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.BillingAccount}}{{with $tmp}}
+    billing_account = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.Labels}}{{with $tmp}}
+    labels {
+        {{range $i, $v := $tmp}}
+        {{$i}} = "{{$v}}"{{end}}
+    }{{end}}
+    
+    //please set if you need
+    //skip delete =
+    //auto_create_network =
+}

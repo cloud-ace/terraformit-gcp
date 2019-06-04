@@ -1,0 +1,112 @@
+resource "google_compute_instance" "{{convertSlashAndDotToDash .Primary.ID}}"{
+    //provider
+    {{ if eq .Provider "provider.google" }}provider = "google"{{ end }}
+    {{ if eq .Provider "provider.google-beta" }}provider = "google-beta"{{ end }}
+    //required
+    boot_disk{
+        {{$tmp := .Primary.Attributes.BootDiskAutoDelete}}{{with $tmp}}auto_delete = "{{$tmp}}"{{end}}
+        {{$tmp := .Primary.Attributes.BootDiskDeviceName}}{{with $tmp}}device_name = "{{$tmp}}"{{end}}
+        {{$tmp := .Primary.Attributes.BootDiskDiskEncryptionKeyRaw}}{{with $tmp}}encryption_key_raw = "{{$tmp}}"{{end}}
+        initialize_params{
+        {{$tmp := .Primary.Attributes.BootDiskInitializeParamsImage}}{{with $tmp}}image = "{{$tmp}}"{{end}}
+        {{$tmp := .Primary.Attributes.BootDiskInitializeParamsSize}}{{with $tmp}}size = "{{$tmp}}"{{end}}
+        {{$tmp := .Primary.Attributes.BootDiskInitializeParamsType}}{{with $tmp}}type = "{{$tmp}}"{{end}}            
+        }  
+    }
+    machine_type = "{{.Primary.Attributes.MachineType}}"
+    {{$tmp := .Primary.Attributes.Name}}{{with $tmp}}
+    name = "{{$tmp}}"{{end}}
+  
+    {{$tmp := .Primary.Attributes.Zone}}{{with $tmp}}
+    zone = "{{$tmp}}"{{end}}
+  
+    {{range $i, $v := .Primary.Attributes.NetworkInterface}}
+    network_interface {
+        {{$tmp := $v.Network}}{{with $tmp}}network = "{{$tmp}}"{{end}}
+        {{$tmp := $v.Subnetwork}}{{with $tmp}}subnetwork = "{{$tmp}}"{{end}}
+        {{$tmp := $v.SubnetworkProject}}{{with $tmp}}subnetwork_project = "{{$tmp}}"{{end}}
+        {{$tmp := $v.NetworkIP}}{{with $tmp}}network_ip = "{{$tmp}}"{{end}}
+
+        {{$tmp := $v.AccessConfigNatIP}}{{$tmp1 := $v.AccessConfigNetworkTier}}{{with $tmp}}
+        {{range $ii, $vv := $tmp}}
+        access_config{
+            nat_ip = "{{$vv}}"
+            {{range $iii, $vvv := $tmp1}}
+            {{ if eq $iii $ii }}network_tier = "{{$vvv}}"{{end}}
+            {{end}}
+        }{{end}}{{end}}
+    }{{end}}
+    
+    //optional
+    //allow_stopping_for_update
+    {{range $i, $v := .Primary.Attributes.AttachedDisk}}
+    attached_disk  {
+        {{$tmp := $v.DeviceName}}{{with $tmp}}device_name = "{{$tmp}}"{{end}}
+        {{$tmp := $v.EncryptionKeyRaw}}{{with $tmp}}disk_encryption_key_raw = "{{$tmp}}"{{end}}
+        {{$tmp := $v.Source}}{{with $tmp}}source = "{{$tmp}}"{{end}}
+        {{$tmp := $v.Mode}}{{with $tmp}}mode = "{{$tmp}}"{{end}}
+    }{{end}}
+  
+    {{$tmp := .Primary.Attributes.CanIPForward}}{{with $tmp}}
+    can_ip_forward = "{{$tmp}}"{{end}}
+    //create_timeout
+    //description
+
+    {{$tmp := .Primary.Attributes.DeletionProtection}}{{with $tmp}}
+    deletion_protection = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.Hostname}}{{with $tmp}}
+    hostname = "{{$tmp}}"{{end}}
+
+    {{range $i, $v := .Primary.Attributes.GuestAccelerator}}
+    guest_accelerator  {
+        {{$tmp := $v.Type}}{{with $tmp}}type = "{{$tmp}}"{{end}}
+        {{$tmp := $v.Count}}{{with $tmp}}count = "{{$tmp}}"{{end}}
+    }{{end}}
+
+    {{$tmp := .Primary.Attributes.Labels}}{{with $tmp}} 
+    labels {
+        {{range $i, $v := $tmp}}
+        {{$i}} = "{{$v}}"{{end}}
+    }{{end}}
+    {{$tmp := .Primary.Attributes.Metadata}}{{with $tmp}} 
+     metadata {
+        //改行は\n手動で変換する
+        //metadata_startup_script
+        {{range $i, $v := $tmp}}
+        {{$i}} = "{{$v}}"
+        {{end}}
+    }{{end}}
+
+    {{$tmp := .Primary.Attributes.MetadataStartupScript}}{{with $tmp}}
+    metadata_startup_script = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.MinCPUPlatform}}{{with $tmp}}
+    min_cpu_platform  = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.Project}}{{with $tmp}}
+    project = "{{$tmp}}"{{end}}
+
+    {{range $i, $v := .Primary.Attributes.Scheduling}}
+    scheduling {
+        {{$tmp := $v.AutomaticRestart}}{{with $tmp}}automatic_restart = "{{$tmp}}"{{end}}
+        {{$tmp := $v.OnHostMaintenance}}{{with $tmp}}on_host_maintenance = "{{$tmp}}"{{end}}
+        {{$tmp := $v.Preemptible}}{{with $tmp}}preemptible = "{{$tmp}}"{{end}}
+    }{{end}}
+
+    {{range $i, $v := .Primary.Attributes.GuestAccelerator}}
+    scratch_disk  {
+        {{$tmp := $v.Interface}}{{with $tmp}}interface = "{{$tmp}}"{{end}}
+    }{{end}}
+
+    {{range $i, $v := .Primary.Attributes.ServiceAccount}}{{$length := len $v.Scopes}}
+    service_account {
+        email = "{{$v.Email}}" 
+        {{with $v.Scopes}}scopes = [{{range $ii, $vv := $v.Scopes}}{{if lt (plus $ii) $length  }}"{{$vv}}",{{else}}"{{$vv}}"{{ end }}{{ end }}]{{end}}
+    }{{end}}
+
+    {{$tmp := .Primary.Attributes.Tags}}
+    {{with $tmp}}{{$length := len $tmp}}
+    tags = [{{range $i, $v := $tmp}}{{if lt (plus $i) $length }}"{{$v}}",{{else}}"{{$v}}"{{ end }}{{ end }}]{{end}}
+
+}

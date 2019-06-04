@@ -1,0 +1,84 @@
+resource "google_compute_backend_service" "{{convertSlashAndDotToDash .Primary.ID}}"{
+    //provider
+    {{ if eq .Provider "provider.google" }}provider = "google"{{ end }}
+    {{ if eq .Provider "provider.google-beta" }}provider = "google-beta"{{ end }}
+    //required
+    name = "{{.Primary.Attributes.Name}}"
+    {{$tmp := .Primary.Attributes.HealthChecks}}{{$length := len $tmp}}
+    health_checks = [{{range $i, $v := $tmp}}{{if lt (plus $i) $length }}"{{$v}}",{{else}}"{{$v}}"{{ end }}{{ end }}]
+    
+    //optional
+    {{$tmp := .Primary.Attributes.AffinityCookieTTLSec}}{{with $tmp}}
+    affinity_cookie_ttl_sec = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.AffinityCookieTTLSec}}{{with $tmp}}
+    affinity_cookie_ttl_sec = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.ConnectionDrainingTimeoutSec}}{{with $tmp}}
+    connection_draining_timeout_sec = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.Description}}{{with $tmp}}
+    description = "{{escapeDoubleQuote $tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.EnableCdn}}{{with $tmp}}
+    enable_cdn  = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.PortName}}{{with $tmp}}
+    port_name  = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.Protocol}}{{with $tmp}}
+    protocol  = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.LoadBalancingScheme}}{{with $tmp}}
+    load_balancing_scheme  = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.SecurityPolicy}}{{with $tmp}}
+    security_policy  = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.SessionAffinity}}{{with $tmp}}
+    session_affinity = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.TimeoutSec}}{{with $tmp}}
+    timeout_sec = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.Project}}{{with $tmp}}
+    project = "{{$tmp}}"{{end}}
+
+    {{range $i, $v := .Primary.Attributes.Backend}}
+     backend {
+        {{$tmp := $v.BalancingMode}}{{with $tmp}}balancing_mode = "{{$tmp}}"{{end}}
+        {{$tmp := $v.CapacityScaler}}{{with $tmp}}capacity_scaler = "{{$tmp}}"{{end}}
+        {{$tmp := $v.Description}}{{with $tmp}}description = "{{escapeDoubleQuote $tmp}}"{{end}}
+        {{$tmp := $v.Group}}{{with $tmp}}group = "{{$tmp}}"{{end}}
+        {{$tmp := $v.MaxConnections}}{{with $tmp}}max_connections = "{{$tmp}}"{{end}}
+        {{$tmp := $v.MaxConnectionsPerInstance}}{{with $tmp}}max_connections_per_instance = "{{$tmp}}"{{end}}
+        {{$tmp := $v.MaxRate}}{{with $tmp}}max_rate = "{{$tmp}}"{{end}}
+        {{$tmp := $v.MaxRatePerInstance}}{{with $tmp}}max_rate_per_instance = "{{$tmp}}"{{end}}
+        {{$tmp := $v.MaxUtilization}}{{with $tmp}}max_utilization = "{{$tmp}}"{{end}}
+    }{{end}}
+
+    {{range $i, $v := .Primary.Attributes.Iap}}
+     iap {
+        {{$tmp := $v.Oauth2ClientId}}{{with $tmp}}oauth2_client_id = "{{$tmp}}"{{end}}
+        {{$tmp := $v.Oauth2ClientSecret}}{{with $tmp}}oauth2_client_secret = "{{$tmp}}"{{end}}
+        {{$tmp := $v.Oauth2ClientSecretSha256}}{{with $tmp}}oauth2_client_secret_sha256 = "{{$tmp}}"{{end}}
+    }{{end}}
+
+    {{range $i, $v := .Primary.Attributes.CdnPolicy}}
+    cdn_policy {
+        {{$tmp := $v.SignedUrlCacheMaxAgeSec}}{{with $tmp}}signed_url_cache_max_age_sec = "{{$tmp}}"{{end}}
+
+        {{$tmp := $v.CacheKeyPolicy}}{{with $tmp}}
+        {{range $ii, $vv := $tmp}}
+        cache_key_policy{
+            {{$tmp1 := $v.IncludHost}}{{with $tmp1}}include_host = "{{$tmp1}}"{{end}}
+            {{$tmp1 := $v.IncludProtocol}}{{with $tmp1}}include_protocol = "{{$tmp1}}"{{end}}
+            {{$tmp1 := $v.IncludQueryString}}{{with $tmp1}}include_query_string = "{{$tmp1}}"{{end}}
+            {{$tmp1 := $v.QueryStringBlackList}}{{with $tmp1}}query_string_blacklist = "{{$tmp1}}"{{end}}
+            {{$tmp1 := $v.QueryStringWhiteList}}{{with $tmp1}}query_string_whitelist = "{{$tmp1}}"{{end}}
+        }{{end}}{{end}}
+    }{{end}}
+
+    //beta
+    //custom_request_headers
+}

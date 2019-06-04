@@ -1,0 +1,74 @@
+resource "google_storage_bucket" "{{convertSlashAndDotToDash .Primary.ID}}"{
+    //provider
+    {{ if eq .Provider "provider.google" }}provider = "google"{{ end }}
+    {{ if eq .Provider "provider.google-beta" }}provider = "google-beta"{{ end }}
+    //required
+    name = "{{.Primary.Attributes.Name}}"
+    //optional
+    {{$tmp := .Primary.Attributes.ForceDestroy}}{{with $tmp}}
+    force_destroy = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.Location}}{{with $tmp}}
+    location = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.Project}}{{with $tmp}}
+    project = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.StorageClass}}{{with $tmp}}
+    storage_class = "{{$tmp}}"{{end}}
+
+    {{range $i, $v := .Primary.Attributes.LifecycleRule}}
+    lifecycle_rule {
+        {{$tmp := $v.Action}}{{with $tmp}}
+        {{range $ii, $vv := $tmp}}
+        action{
+            {{with $vv.Type}}type = "{{$vv.Type}}"{{end}}
+            {{with $vv.StorageClass}}storage_class = "{{$vv.StorageClass}}"{{end}}
+        }{{end}}{{end}}
+        {{$tmp := $v.Condition}}{{with $tmp}}
+        {{range $ii, $vv := $tmp}}{{$length := len $vv.MatchesStorageClass}}
+        condition{
+            {{with $vv.Age}}age = "{{$vv.Age}}"{{end}}
+            {{with $vv.CreatedBefore}}created_before = "{{$vv.CreatedBefore}}"{{end}}
+            {{with $vv.IsLive}}is_live = "{{$vv.IsLive}}"{{end}}
+            {{with $vv.WithState}}with_state = "{{$vv.WithState}}"{{end}}
+            {{with $vv.NumNewerVersions}}num_newer_versions  = "{{$vv.NumNewerVersions}}"{{end}}
+            {{with $vv.MatchesStorageClass}}matches_storage_class  = [{{range $iii, $vvv := $vv.MatchesStorageClass}}{{if lt (plus $iii) $length  }}"{{$vvv}}",{{else}}"{{$vvv}}"{{ end }}{{ end }}]{{end}}
+        }{{end}}{{end}}
+    }{{end}}
+
+    {{range $i, $v := .Primary.Attributes.Versioning}}
+     versioning {
+        {{with $v.Enabled}}enabled = "{{$v.Enabled}}"{{end}}
+    }{{end}}
+
+    //website not supported
+    {{range $i, $v := .Primary.Attributes.Cors}}{{$lengthm := len $v.Method}}{{$lengtho := len $v.Origin}}{{$lengthr := len $v.ResponseHeader}}
+     cors {
+        {{with $v.Method}}method = [{{range $ii, $vv := $v.Method}}{{if lt (plus $ii) $lengthm }}"{{$vv}}",{{else}}"{{$vv}}"{{ end }}{{ end }}]{{end}}
+        {{with $v.Origin}}origin = [{{range $ii, $vv := $v.Origin}}{{if lt (plus $ii) $lengtho }}"{{$vv}}",{{else}}"{{$vv}}"{{ end }}{{ end }}]{{end}}
+        {{with $v.ResponseHeader}}response_header = [{{range $ii, $vv := $v.ResponseHeader}}{{if lt (plus $ii) $lengthr }}"{{$vv}}",{{else}}"{{$vv}}"{{ end }}{{ end }}]{{end}}
+        {{with $v.MaxAgeSeconds}}max_age_seconds = "{{$v.MaxAgeSeconds}}"{{end}}
+    }{{end}}
+
+    {{$tmp := .Primary.Attributes.Labels}}{{with $tmp}} 
+    labels {
+        {{range $i, $v := $tmp}}
+        {{$i}} = "{{$v}}"{{end}}
+    }{{end}}
+
+    {{range $i, $v := .Primary.Attributes.Logging}}
+    logging {
+        {{$tmp := $v.LogBucket}}{{with $tmp}}log_bucket = "{{$tmp}}" {{end}}
+        {{$tmp := $v.LogObjectPrefix}}{{with $tmp}}log_object_prefix = "{{$tmp}}" {{end}}
+    }{{end}}
+
+    {{range $i, $v := .Primary.Attributes.Encryption}}
+    encryption {
+        {{$tmp := $v.DefaultKmsKeyName}}{{with $tmp}}default_kms_key_name = "{{$tmp}}" {{end}}
+    }{{end}}
+
+    {{$tmp := .Primary.Attributes.RequesterPays}}{{with $tmp}}
+    requester_pays = "{{$tmp}}"{{end}}
+
+}

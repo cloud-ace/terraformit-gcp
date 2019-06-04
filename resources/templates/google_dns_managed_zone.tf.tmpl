@@ -1,0 +1,61 @@
+resource "google_dns_managed_zone" "{{convertSlashAndDotToDash .Primary.ID}}"{
+    //provider
+    {{ if eq .Provider "provider.google" }}provider = "google"{{ end }}
+    {{ if eq .Provider "provider.google-beta" }}provider = "google-beta"{{ end }}
+    
+    //required
+    name = "{{.Primary.Attributes.Name}}"
+    dns_name = "{{.Primary.Attributes.DNSName}}"
+
+    //optional
+    {{$tmp := .Primary.Attributes.Description}}{{with $tmp}}
+    description = "{{escapeDoubleQuote $tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.Labels}}{{with $tmp}} 
+    labels {
+        {{range $i, $v := $tmp}}
+        {{$i}} = "{{$v}}"{{end}}
+    }{{end}}
+
+    {{$tmp := .Primary.Attributes.Visibility}}{{with $tmp}}
+    visibility = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.Project}}{{with $tmp}}
+    project = "{{$tmp}}"{{end}}
+
+    {{range $i, $v := .Primary.Attributes.PrivateVisibilityConfig}}
+    private_visibility_config   {
+        {{$tmp := $v.Networks}}{{with $tmp}}
+        {{range $ii, $vv := $tmp}}
+        networks {
+              {{$tmp1 := $vv.NetworkURL}}{{with $tmp1}}network_url = "{{$tmp1}}"{{end}}
+        }{{end}}{{end}}
+    }{{end}}
+
+    {{range $i, $v := .Primary.Attributes.ForwardingConfig}}
+    forwarding_config {
+        {{$tmp := $v.TargetNameServers}}{{with $tmp}}
+        {{range $ii, $vv := $tmp}}
+        target_name_servers {
+              {{$tmp1 := $vv.IPv4Address}}{{with $tmp1}}ipv4_address = "{{$tmp1}}"{{end}}
+        }{{end}}{{end}}
+    }{{end}}
+
+    {{range $i, $v := .Primary.Attributes.PrivateVisibilityConfig}}
+    private_visibility_config   {
+        {{$tmp := $v.Networks}}{{with $tmp}}
+        {{range $ii, $vv := $tmp}}
+        networks {
+              {{$tmp1 := $vv.NetworkURL}}{{with $tmp1}}network_url = "{{$tmp1}}"{{end}}
+        }{{end}}{{end}}
+    }{{end}}
+
+    {{range $i, $v := .Primary.Attributes.PeeringConfig}}
+    peering_config   {
+        {{$tmp := $v.TargetNetwork}}{{with $tmp}}
+        {{range $ii, $vv := $tmp}}
+        target_network {
+              {{$tmp1 := $vv.NetworkURL}}{{with $tmp1}}network_url = "{{$tmp1}}"{{end}}
+        }{{end}}{{end}}
+    }{{end}}
+}

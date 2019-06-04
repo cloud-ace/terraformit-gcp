@@ -1,0 +1,36 @@
+resource "google_dns_policy" "{{convertSlashAndDotToDash .Primary.ID}}"{
+    //provider
+    {{ if eq .Provider "provider.google" }}provider = "google"{{ end }}
+    {{ if eq .Provider "provider.google-beta" }}provider = "google-beta"{{ end }}
+    
+    //required
+    name = "{{.Primary.Attributes.Name}}"
+
+    //optional
+    {{$tmp := .Primary.Attributes.Description}}{{with $tmp}}
+    description = "{{escapeDoubleQuote $tmp}}"{{end}}
+    
+    {{$tmp := .Primary.Attributes.EnableInboundForwarding}}{{with $tmp}}
+    enable_inbound_forwarding = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.EnableLogging}}{{with $tmp}}
+    enable_logging = "{{$tmp}}"{{end}}
+
+    {{$tmp := .Primary.Attributes.Project}}{{with $tmp}}
+    project = "{{$tmp}}"{{end}}
+
+    {{range $i, $v := .Primary.Attributes.AlternativeNameServerConfig}}
+    alternative_name_server_config   {
+        {{$tmp := $v.TargetNameServers}}{{with $tmp}}
+        {{range $ii, $vv := $tmp}}
+        target_name_servers {
+              {{$tmp1 := $vv}}{{with $tmp1}}ipv4_address = "{{$tmp1}}"{{end}}
+        }{{end}}{{end}}
+    }{{end}}
+
+    {{range $i, $v := .Primary.Attributes.Networks}}
+    networks {
+        {{$tmp := $v.NetworkURL}}{{with $tmp}}network_url = "{{$tmp}}"{{end}}
+    }{{end}}
+
+}
