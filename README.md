@@ -32,6 +32,10 @@ Install [Go tools](https://golang.org/dl/) to use go command.
 Generate ~/.config/gcloud/application_default_credentials.json credential.  
 Terraform command and google storage library use this credential.
 ```
+gcloud init
+```
+or
+```
 gcloud auth login
 ```
 
@@ -55,8 +59,7 @@ source ~/.bash_profile
 ```
 
 ### Enable CloudAssetAPI
-Enable CloudAssetAPI.  
-[Enabling and Disabling APIs](https://cloud.google.com/apis/docs/enable-disable-apis?rd=1&ref_topic=6262490&visit_id=636945660477041590-1211530211)
+Enable [CloudAssetAPI](https://console.cloud.google.com/apis/library/cloudasset.googleapis.com).    
 
 ### Create bucket for storing CloudAssetAPI json data
 Create bucket for storing CloudAssetAPI outputs.
