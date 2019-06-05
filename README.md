@@ -44,7 +44,7 @@ Install terraformit-gcp.
 git clone terraformit-gcp to your GOPATH.
 ```
 export GO111MODULE=on
-git clone https://github.com/cloud-ace/terraformit-gcp.git -b v0.9.0 ~/go/src/github.com/cloud-ace/terraformit-gcp
+git clone https://github.com/cloud-ace/terraformit-gcp.git -b v0.9.1 ~/go/src/github.com/cloud-ace/terraformit-gcp
 cd ~/go/src/github.com/cloud-ace/terraformit-gcp
 go install
 ```
