@@ -108,9 +108,11 @@ var createCmd = &cobra.Command{
 				log.Printf("%+v\n", err)
 				os.Exit(1)
 			}
-			if err := cloudasset.CreateFileForImport(metaStructs, "backend", viper.GetStringMapString("Terraform")["gcp-provider-default-region"], viper.GetStringMapString("Terraform")["backend-type"], viper.GetStringMapString("Terraform")["backend-location"], viper.GetStringMapString("Terraform")["provider"]); err != nil {
-				log.Printf("%+v\n", err)
-				os.Exit(1)
+			if viper.GetStringMapString("Terraform")["workspace"] == "default" || viper.GetStringMapString("Terraform")["backend-type"] == "gcs" {
+				if err := cloudasset.CreateFileForImport(metaStructs, "backend", viper.GetStringMapString("Terraform")["gcp-provider-default-region"], viper.GetStringMapString("Terraform")["backend-type"], viper.GetStringMapString("Terraform")["backend-location"], viper.GetStringMapString("Terraform")["provider"]); err != nil {
+					log.Printf("%+v\n", err)
+					os.Exit(1)
+				}
 			}
 
 			log.Println("Importfiles created successfully")
@@ -167,11 +169,12 @@ var createCmd = &cobra.Command{
 					}
 				} else if viper.GetStringMapString("Terraform")["backend-type"] == "local" {
 
-					tfstatePath = viper.GetStringMapString("Terraform")["backend-location"]
-					log.Printf("get tfstate  %v\n", tfstatePath)
+					tfstatePath, err = terraformUtil.GetTfstatePath(viper.GetStringMapString("Terraform")["workspace"])
 					if err != nil {
 						log.Printf("%+v\n", err)
 					}
+					log.Printf("get tfstate  %v\n", tfstatePath)
+
 					tfstateBytes, err = resources.ReadTfstateFile(tfstatePath)
 					if err != nil {
 						log.Printf("%+v\n", err)

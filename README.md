@@ -100,11 +100,11 @@ Terraform:
   # https://www.terraform.io/docs/backends/types/gcs.html
   backend-type: "local"
 
-  # if you set "local" to backend-type ,set your localpath to backend-location
-  # backend-location: "./terraform.tfstate"
-  # if you set "gcs" to backend-type ,set your uri to backend-location
-  # backend-location: "gs://xxxxxx/terraform.tfstate"  
-  backend-location: "./terraform.tfstate"
+  # if you set "local" to backend-type, set "" to backend-location.
+  # backend-location: ""
+  # if you set "gcs" to backend-type ,set your bucket name to backend-location
+  # backend-location: "bucketname"  
+  backend-location: ""
 
   # Default Region
   gcp-provider-default-region: "asia-northeast1"

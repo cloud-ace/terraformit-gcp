@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/cloud-ace/terraformit-gcp/utils"
-	"github.com/spf13/viper"
 	"golang.org/x/xerrors"
 )
 
@@ -44,8 +43,7 @@ func ExecuteImportSh() error {
 	return nil
 }
 
-func GetTfstatePath() (string, error) {
-	workspace := viper.GetStringMapString("Terraform")["workspace"]
+func GetTfstatePath(workspace string) (string, error) {
 	if workspace == "" {
 		return "", xerrors.New("Error: workspace is not set")
 	}

@@ -21,3 +21,4 @@ terraform.tfstate.d*
 terrafomit-gcp-resource.tf
 client_secret*
 terrafomit-gcp
+.terraformit-gcp.yaml
