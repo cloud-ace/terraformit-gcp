@@ -83,7 +83,7 @@ var planCmd = &cobra.Command{
 			log.Printf("%+v\n", err)
 			os.Exit(1)
 		}
-		if viper.GetStringMapString("Terraform")["workspace"] == "default" || viper.GetStringMapString("Terraform")["backend-type"] == "gcs" {
+		if viper.GetStringMapString("Terraform")["backend-type"] == "gcs" {
 			if err := cloudasset.CreateFileForImport(metaStructs, "backend", viper.GetStringMapString("Terraform")["gcp-provider-default-region"], viper.GetStringMapString("Terraform")["backend-type"], viper.GetStringMapString("Terraform")["backend-location"], viper.GetStringMapString("Terraform")["provider"]); err != nil {
 				log.Printf("%+v\n", err)
 				os.Exit(1)
