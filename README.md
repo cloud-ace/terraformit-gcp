@@ -153,8 +153,8 @@ Following steps below are executed.
 This command supports GCP resources which is supported by [Cloud Asset API](https://cloud.google.com/resource-manager/docs/cloud-asset-inventory/overview?hl=en).
 
 ✅:support  
-🔧:will support
-/ :no support
+🔧:will support  
+/ :no support  
 
 | CloudAssetAPI Name | CloudAssetAPI Support | terrafromResource name | terrafromResource Support | 
 |:-------------:|:-------:|:-------------:|:--------:|
