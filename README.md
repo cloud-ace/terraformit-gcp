@@ -150,8 +150,11 @@ Following steps below are executed.
 1. create tffile
 
 ## Support Table
-This command will support GCP resources [Cloud Asset API](https://cloud.google.com/resource-manager/docs/cloud-asset-inventory/overview?hl=en) supports.
+This command supports GCP resources which is supported by [Cloud Asset API](https://cloud.google.com/resource-manager/docs/cloud-asset-inventory/overview?hl=en).
 
+✅:support  
+🔧:will support
+/ :no support
 
 | CloudAssetAPI Name | CloudAssetAPI Support | terrafromResource name | terrafromResource Support | 
 |:-------------:|:-------:|:-------------:|:--------:|
@@ -173,7 +176,7 @@ This command will support GCP resources [Cloud Asset API](https://cloud.google.c
 | compute.googleapis.com/GlobalForwardingRule |  ✅ | google_compute_global_forwarding_rule |  ✅ | 
 | compute.googleapis.com/HealthCheck |  ✅ | google_compute_health_check |  ✅ | 
 | compute.googleapis.com/HttpHealthCheck |  ✅ | google_compute_http_health_check |  ✅ | 
-| compute.googleapis.com/HttpsHealthCheck | not yet | google_compute_https_health_check | not yet |
+| compute.googleapis.com/HttpsHealthCheck | 🔧 | google_compute_https_health_check | 🔧 |
 | compute.googleapis.com/Image |  ✅ | google_compute_image |  ✅ | 
 | compute.googleapis.com/Instance |  ✅ | google_compute_instance |  ✅ | 
 | compute.googleapis.com/InstanceGroup |  ✅ | google_compute_instance_group |  ✅ | 
@@ -181,9 +184,9 @@ This command will support GCP resources [Cloud Asset API](https://cloud.google.c
 | compute.googleapis.com/InstanceTemplate |  ✅ | google_compute_instance_template |  ✅ | 
 | compute.googleapis.com/Network |  ✅ | google_compute_network |  ✅ | 
 | compute.googleapis.com/Project | / | / | / | 
-| compute.googleapis.com/RegionBackendService | not yet | google_compute_region_backend_service | not yet |
+| compute.googleapis.com/RegionBackendService | 🔧 | google_compute_region_backend_service | 🔧 |
 | compute.googleapis.com/Route |  ✅ | google_compute_route |  ✅ | 
-| compute.googleapis.com/Router | not yet | google_compute_router | not yet |
+| compute.googleapis.com/Router | 🔧 | google_compute_router | 🔧 |
 | compute.googleapis.com/Snapshot |  ✅ | google_compute_snapshot |  ✅ |
 | compute.googleapis.com/SslCertificate |  ✅ | google_compute_ssl_certificate(you need to set your private key manually) | ✅ |
 | compute.googleapis.com/Subnetwork |  ✅ | google_compute_subnetwork |  ✅ | 
@@ -191,18 +194,18 @@ This command will support GCP resources [Cloud Asset API](https://cloud.google.c
 | compute.googleapis.com/TargetHttpsProxy |  ✅ | google_compute_target_https_proxy |  ✅ |
 | compute.googleapis.com/TargetInstance | / | / | / |
 | compute.googleapis.com/TargetPool |  ✅(only support in default Region) | google_compute_target_pool |  ✅ |
-| compute.googleapis.com/TargetTcpProxy | not yet | google_compute_target_tcp_proxy | not yet |
-| compute.googleapis.com/TargetSslProxy | not yet | google_compute_target_ssl_proxy | not yet |
-| compute.googleapis.com/TargetVpnGateway | not yet | google_compute_vpn_gateway | not yet |
+| compute.googleapis.com/TargetTcpProxy | 🔧 | google_compute_target_tcp_proxy | 🔧 |
+| compute.googleapis.com/TargetSslProxy | 🔧 | google_compute_target_ssl_proxy | 🔧 |
+| compute.googleapis.com/TargetVpnGateway | 🔧 | google_compute_vpn_gateway | 🔧 |
 | compute.googleapis.com/UrlMap |  ✅ | google_compute_url_map |  ✅ | 
-| compute.googleapis.com/VpnTunnel | not yet | google_compute_vpn_tunnel | not yet |
+| compute.googleapis.com/VpnTunnel | 🔧 | google_compute_vpn_tunnel | 🔧 |
 **App Engine**
-| appengine.googleapis.com/Application | not yet | google_app_engine_application(cannot delete app engine) | not yet |
+| appengine.googleapis.com/Application | 🔧 | google_app_engine_application(cannot delete app engine) | 🔧 |
 | appengine.googleapis.com/Service | / | / | / |
 | appengine.googleapis.com/Version | / | / | / |
 **Google Kubernetes Engine** 
 | container.googleapis.com/Cluster |  ✅ | google_container_cluster |  ✅ |
-| container.googleapis.com/NodePool(beta) | not yet | google_container_node_pool | not yet |
+| container.googleapis.com/NodePool(beta) | 🔧 | google_container_node_pool | 🔧 |
 **Cloud Billing**
 | cloudbilling.googleapis.com/BillingAccount | / | / | / |
 **Cloud Storage**
@@ -211,26 +214,26 @@ This command will support GCP resources [Cloud Asset API](https://cloud.google.c
 | dns.googleapis.com/ManagedZone |  ✅ | google_dns_managed_zone |  ✅ | 
 | dns.googleapis.com/Policy |  ✅(only google-beta) | google_dns_policy |  ✅ |
 **Cloud Spanner**
-| spanner.googleapis.com/Instance | not yet | google_spanner_instance | not yet |
-| spanner.googleapis.com/Database | not yet | google_spanner_database | not yet |
+| spanner.googleapis.com/Instance | 🔧 | google_spanner_instance | 🔧 |
+| spanner.googleapis.com/Database | 🔧 | google_spanner_database | 🔧 |
 **BigQuery**
-| bigquery.googleapis.com/Dataset| not yet | google_bigquery_dataset | not yet |
-| bigquery.googleapis.com/Table | not yet | google_bigquery_table | not yet |
+| bigquery.googleapis.com/Dataset| 🔧 | google_bigquery_dataset | 🔧 |
+| bigquery.googleapis.com/Table | 🔧 | google_bigquery_table | 🔧 |
 **Cloud Identity and Access Management** 
-| iam.googleapis.com/Role | not yet | google_iam_member | not yet |
+| iam.googleapis.com/Role | 🔧 | google_iam_member | 🔧 |
 | iam.googleapis.com/ServiceAccount |  ✅ | google_service_account |  ✅ | 
 **Cloud Pub/Sub**
 | pubsub.googleapis.com/Topic |  ✅ | google_pubsub_subscription |  ✅ | 
 | pubsub.googleapis.com/Subscription |  ✅ | google_pubsub_topic |  ✅ | 
 **Cloud Dataproc**
-| dataproc.googleapis.com/Cluster| not yet | google_dataproc_cluster | not yet |
-| dataproc.googleapis.com/Job | not yet | google_dataproc_job | not yet |
+| dataproc.googleapis.com/Cluster| 🔧 | google_dataproc_cluster | 🔧 |
+| dataproc.googleapis.com/Job | 🔧 | google_dataproc_job | 🔧 |
 **Cloud SQL** 
 | sqladmin.googleapis.com/Instance |  ✅ | google_sql_database_instance |  ✅ |
 **Cloud Bigtable**
 | bigtableadmin.googleapis.com/Cluster| / | / | / |
-| bigtableadmin.googleapis.com/Instance | not yet | google_bigtable_instance | not yet |
-| bigtableadmin.googleapis.com/Table | not yet | google_bigtable_table | not yet |
+| bigtableadmin.googleapis.com/Instance | 🔧 | google_bigtable_instance | 🔧 |
+| bigtableadmin.googleapis.com/Table | 🔧 | google_bigtable_table | 🔧 |
 **Google Kubernetes Engine**
 | k8s.io/Node | / | / | / |
 | k8s.io/Pod | / | / | / |
