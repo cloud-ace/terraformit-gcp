@@ -154,7 +154,7 @@ This command supports GCP resources which is supported by [Cloud Asset API](http
 
 ✅:support  
 🔧:will support  
-/ :no support  
+/ :not supported  
 
 | CloudAssetAPI Name | CloudAssetAPI Support | terrafromResource name | terrafromResource Support | 
 |:-------------:|:-------:|:-------------:|:--------:|
